@@ -1,0 +1,6 @@
+##
+## What are the names of all the red fish?
+##
+
+q1r1 = select (fish) (fcolor='red')
+display ( project ( select (q1r1) (fcolor='red') ) (fname) )

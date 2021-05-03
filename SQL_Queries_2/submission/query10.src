@@ -1,0 +1,17 @@
+##
+## What are the names of the fish that have been born and are swimming?
+## joins events and fish using fish number then selects enotes Born and Swimming
+## projects both enotes relations and finds their intersection and displays fish names
+
+q10r0 = join (event) (fish) (f#=fno)
+
+q10r2 = select (q10r0) (enote='Born')
+
+q10r3 = select (q10r0) (enote='Swimming')
+
+q10r4 = project (q10r3) (fname)
+q10r5 = project (q10r2) (fname)
+
+q10r6 = (q10r4) intersect (q10r5)
+
+display ( project ( q10r6 ) (fname) )

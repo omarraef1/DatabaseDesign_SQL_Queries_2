@@ -1,0 +1,6 @@
+##
+## What are the colors of the sharks?
+## selects fish then displays those with shark specie code number
+
+q4r7 = select (fish)
+display ( project ( select (q4r7) ( (s#='22') or (s#='93') ) ) (fcolor) )

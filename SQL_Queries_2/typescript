@@ -1,0 +1,158 @@
+Script started on Wed 14 Oct 2020 02:12:08 AM MST
+/bin/sh: 0: Can't open .FIRST_TIME
+omarraef1@lectura:~/leap/database/aquarium/source$ echo 'Omar R.G. Mohamed'
+Omar R.G. Mohamed
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query1.src
+##
+## What are the names of all the red fish?
+##
+
+q1r1 = select (fish) (fcolor='red')
+display ( project ( select (q1r1) (fcolor='red') ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query1.src[1P.src2.src
+##
+## What are the colors of all tanks named "lagoon"?
+##
+
+q2r2 = select (tank) (tname='lagoon')
+display ( project ( select (q2r2) (tname='lagoon') ) (tcolor) )
+
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query2.src[1P.src3.src
+##
+## What is the Cartesian Product of the sname field from Species
+## with the tname field from Tank?
+##
+
+q3r3 = project (species) (sname)
+q3r4 = project (tank) (tname)
+q3r5 = (q3r3) product (q3r4)
+
+display ( q3r5 )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query3.src[1P.src4.src
+##
+## What are the colors of the sharks?
+##
+
+q4r7 = select (fish)
+display ( project ( select (q4r7) ( (s#='22') or (s#='93') ) ) (fcolor) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query4.src[1P.src5.src
+##
+## What are the colors of the sharks?
+##
+
+
+q5r0 = select (species) (sname='shark')
+q5r1 = project (q5r0) (sno)
+q5r2 = join (fish) (q5r1) (s#=sno)
+
+display ( project ( select (q5r2) (s#=sno) ) (fcolor) )
+
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query5.src[1P.src6.src
+##
+## What are the names of the fish that are sharks and live in cesspools?
+##
+
+q6r0 = select (species) (sname='shark')
+q6r1 = project (q6r0) (sno)
+q6r2 = join (fish) (q6r1) (s#=sno)
+
+q6r3 = select (tank) (tname='cesspool')
+q6r5 = join (q6r2) (q6r3) (t#=tno)
+
+
+display ( project ( select (q6r5) (t#=tno) ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query6.src[1P.src7.src
+##
+## Create a relation containing names of species, tanks, & fish in one column
+##
+
+
+q7r0 = project (species) (sname)
+q7r1 = project (tank) (tname)
+q7r2 = project (fish) (fname)
+q7r3 = (q7r0) union (q7r1)
+q7r4 = (q7r3) union (q7r2)
+
+display (q7r4)
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query7.src[1P.src8.src
+##
+## What are the names of species found in puddles?
+##
+
+q8r2 = join (fish) (species) (s#=sno)
+
+q8r3 = join (q8r2) (tank) (t#=tno)
+
+display ( project ( select (q8r3) (tname='puddle') ) (sname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query8.src[1P.src9.src
+##
+## What are the names of species that are found in the same tank with a shark?
+##
+
+q9r0 = project (species) (sno, sname)
+q9r1 = project (fish) (fno, t#, s#)
+q9r2 = project (tank) (tno)
+
+q9r3 = join (q9r1) (q9r0) (s#=sno)
+q9r4 = join (q9r3) (q9r2) (t#=tno)
+
+q9r5 = project ( select (species) (sname='shark') ) (sno)
+q9r6 = join (q9r5) (fish) (sno=s#)
+q9r7 = join (q9r6) (tank) (t#=tno)
+q9r8 = project (q9r7) (tno)
+q9r9 = join (q9r8) (q9r4) (tno=t#)
+
+display ( project (q9r9) (sname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query9.src[C[1P.src1.src0.src
+##
+## What are the names of the fish that have been born and are swimming?
+##
+
+q10r0 = join (event) (fish) (f#=fno)
+
+q10r2 = select (q10r0) (enote='Born')
+
+q10r3 = select (q10r0) (enote='Swimming')
+
+q10r4 = project (q10r3) (fname)
+q10r5 = project (q10r2) (fname)
+
+q10r6 = (q10r4) intersect (q10r5)
+
+display ( project ( q10r6 ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query10.src[1P.src1.src
+##
+## What are the names of the fish that have been born but are NOT swimming?
+##
+
+q11r0 = join (event) (fish) (f#=fno)
+
+q11r2 = select (q11r0) (enote='Born')
+
+q11r3 = select (q11r0) (enote='Swimming')
+
+q11r4 = project (q11r3) (fname)
+q11r5 = project (q11r2) (fname)
+
+q11r6 = (q11r5) difference (q11r4)
+
+display ( project ( q11r6 ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query11.src[1P.src2.src
+##
+## What are the names of the species that eat herring that have
+## a representative in all green tanks?
+##
+
+q12r1 = project ( select (tank) (tcolor='green') ) (tno, tcolor)
+
+q12r2 = select (species) ((sfood='herring') or (sfood='anything'))
+
+q12r3 = join (q12r2) (fish) (sno=s#)
+q12r4 = join (q12r1) (q12r3) (tno=t#)
+
+display ( project (q12r4) (sname) )
+
+omarraef1@lectura:~/leap/database/aquarium/source$ exit
+exit
+
+Script done on Wed 14 Oct 2020 02:13:40 AM MST

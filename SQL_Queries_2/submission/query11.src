@@ -1,0 +1,18 @@
+##
+## What are the names of the fish that have been born but are NOT swimming?
+## joins event with fish using fish number
+## then selects enotes Born and Swimming and projects both fish names for them
+## and finds the difference between and displays its fish name
+
+q11r0 = join (event) (fish) (f#=fno)
+
+q11r2 = select (q11r0) (enote='Born')
+
+q11r3 = select (q11r0) (enote='Swimming')
+
+q11r4 = project (q11r3) (fname)
+q11r5 = project (q11r2) (fname)
+
+q11r6 = (q11r5) difference (q11r4)
+
+display ( project ( q11r6 ) (fname) )

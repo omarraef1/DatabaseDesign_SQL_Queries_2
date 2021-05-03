@@ -1,0 +1,408 @@
+Omar R.G. Mohamed
+
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query1.src
+##
+## What are the names of all the red fish?
+## selects red fish then displays them
+
+q1r1 = select (fish) (fcolor='red')
+display ( project ( select (q1r1) (fcolor='red') ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query1.src[1P.src2.src
+##
+## What are the colors of all tanks named "lagoon"?
+## selects tanks named lagoon and displays them
+
+q2r2 = select (tank) (tname='lagoon')
+display ( project ( select (q2r2) (tname='lagoon') ) (tcolor) )
+
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query2.src[1P.src3.src
+##
+## What is the Cartesian Product of the sname field from Species
+## with the tname field from Tank?
+## projects both species and tank names then displays the cartesian product between them
+
+q3r3 = project (species) (sname)
+q3r4 = project (tank) (tname)
+q3r5 = (q3r3) product (q3r4)
+
+display ( q3r5 )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query3.src[1P.src4.src
+##
+## What are the colors of the sharks?
+## selects fish then displays those with shark specie code number
+
+q4r7 = select (fish)
+display ( project ( select (q4r7) ( (s#='22') or (s#='93') ) ) (fcolor) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query4.src[1P.src5.src
+##
+## What are the colors of the sharks?
+## selects shark species and projects their specie number then joins it with fish through specie code and displays color
+
+
+q5r0 = select (species) (sname='shark')
+q5r1 = project (q5r0) (sno)
+q5r2 = join (fish) (q5r1) (s#=sno)
+
+display ( project ( select (q5r2) (s#=sno) ) (fcolor) )
+
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query5.src[1P.src5.src[1P.src6.src
+##
+## What are the names of the fish that are sharks and live in cesspools?
+## joins shark specie number with fish then joins it with tank numbers of cesspool tanks and displays fish names in them
+
+q6r0 = select (species) (sname='shark')
+q6r1 = project (q6r0) (sno)
+q6r2 = join (fish) (q6r1) (s#=sno)
+
+q6r3 = select (tank) (tname='cesspool')
+q6r5 = join (q6r2) (q6r3) (t#=tno)
+
+
+display ( project ( select (q6r5) (t#=tno) ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query6.src[1P.src7.src
+##
+## Create a relation containing names of species, tanks, & fish in one column
+## projects species, tanks, and fish names and combines them all using two union operations
+
+
+q7r0 = project (species) (sname)
+q7r1 = project (tank) (tname)
+q7r2 = project (fish) (fname)
+q7r3 = (q7r0) union (q7r1)
+q7r4 = (q7r3) union (q7r2)
+
+display (q7r4)
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query7.src[1P.src7.src[1P.src8.src
+##
+## What are the names of species found in puddles?
+## join fish and species using name then joins tank to them using tank name then displays specie names found in puddles
+
+q8r2 = join (fish) (species) (s#=sno)
+
+q8r3 = join (q8r2) (tank) (t#=tno)
+
+display ( project ( select (q8r3) (tname='puddle') ) (sname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query8.src[1P.src8.src[1P.src9.src
+##
+## What are the names of species that are found in the same tank with a shark?
+## projects species number and name then fish number, tank id, and specie id, then projects tank numbers
+## joins all the 3 resulting relations above
+## projects species numbers of shark
+## then joins them with fish and tank relations using specie and tank numbers
+## projects tank numbers of the resulting relation then join them with the initial 3 relations and displays specie name
+
+q9r0 = project (species) (sno, sname)
+q9r1 = project (fish) (fno, t#, s#)
+q9r2 = project (tank) (tno)
+
+q9r3 = join (q9r1) (q9r0) (s#=sno)
+q9r4 = join (q9r3) (q9r2) (t#=tno)
+
+q9r5 = project ( select (species) (sname='shark') ) (sno)
+q9r6 = join (q9r5) (fish) (sno=s#)
+q9r7 = join (q9r6) (tank) (t#=tno)
+q9r8 = project (q9r7) (tno)
+q9r9 = join (q9r8) (q9r4) (tno=t#)
+
+display ( project (q9r9) (sname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query9.src[K[K[K[K[K10.src
+##
+## What are the names of the fish that have been born and are swimming?
+## joins events and fish using fish number then selects enotes Born and Swimming
+## projects both enotes relations and finds their intersection and displays fish names
+
+q10r0 = join (event) (fish) (f#=fno)
+
+q10r2 = select (q10r0) (enote='Born')
+
+q10r3 = select (q10r0) (enote='Swimming')
+
+q10r4 = project (q10r3) (fname)
+q10r5 = project (q10r2) (fname)
+
+q10r6 = (q10r4) intersect (q10r5)
+
+display ( project ( q10r6 ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query10.src[K[K[K[K[K1.src
+##
+## What are the names of the fish that have been born but are NOT swimming?
+## joins event with fish using fish number
+## then selects enotes Born and Swimming and projects both fish names for them
+## and finds the difference between and displays its fish name
+
+q11r0 = join (event) (fish) (f#=fno)
+
+q11r2 = select (q11r0) (enote='Born')
+
+q11r3 = select (q11r0) (enote='Swimming')
+
+q11r4 = project (q11r3) (fname)
+q11r5 = project (q11r2) (fname)
+
+q11r6 = (q11r5) difference (q11r4)
+
+display ( project ( q11r6 ) (fname) )
+omarraef1@lectura:~/leap/database/aquarium/source$ cat query11.src[C[1P.src2.src[C[C[C[C
+##
+## What are the names of the species that eat herring that have
+## a representative in all green tanks?
+## projects tanks colored green and tank numbers then
+## selects herring and anything eating species from species relations
+## joins both of the resulting relations with fish using specie number and tank number
+## then displays specie names for the resulting relation
+
+q12r1 = project ( select (tank) (tcolor='green') ) (tno, tcolor)
+
+q12r2 = select (species) ((sfood='herring') or (sfood='anything'))
+
+q12r3 = join (q12r2) (fish) (sno=s#)
+q12r4 = join (q12r1) (q12r3) (tno=t#)
+
+display ( project (q12r4) (sname) )
+
+
+omarraef1@lectura:~/leap/bin$ ./leap
+LEAP RDBMS 1.2.6.1 - An extensible and free RDBMS
+Copyright (C) 1995-2004 Richard Leyton.
+
+LEAP comes with ABSOLUTELY NO WARRANTY; for details type "warranty".
+This is free software, and you are welcome to redistribute it
+under certain conditions; type "copying" for details.
+
+[NON-FATAL] #2 - Error opening file [./configs/vars].
+Message: No variables set!
+Message: Directory specified [./] not valid. Trying [../]
+Message: Debug level set to: 0
+Message: Minimum debug level set to: 0
+Message: Variables are now set.
+Message: Applying command line options...
+Message: Completed application of command line options...
+Message: LEAP is starting...
+Message: Opening the [tempdb] database...
+Message: Creating hash table for [zztsbb].
+Message: Creating hash table for [zzhwjt].
+Message: Creating hash table for [zzgwpf].
+Message: Creating hash table for [zzakxl].
+Message: Creating hash table for [zztiyw].
+Message: Creating hash table for [zzjkkc].
+Message: Creating hash table for [zzwtrt].
+Message: Creating hash table for [zzktzv].
+Message: Creating hash table for [zzxjrt].
+Message: Creating hash table for [zzpvis].
+Message: Creating hash table for [zzlykb].
+Message: Creating hash table for [zzqrqq].
+Message: Creating hash table for [zzplwo].
+Message: Creating hash table for [zzstqe].
+Message: Creating hash table for [zzsrbj].
+Message: Creating hash table for [zzveld].
+Message: Creating hash table for [zzjzsb].
+Message: Creating hash table for [zzzjmn].
+Message: Creating hash table for [zzirzm].
+Message: Creating hash table for [zzoxmq].
+Message: Creating hash table for [zzfytm].
+Message: Creating hash table for [zzspog].
+Message: Creating hash table for [zzqjhw].
+Message: Creating hash table for [zzjssl].
+Message: Creating hash table for [zzeade].
+Message: Opening the [master] database...
+Message: Opening the [user] database...
+Message: Startup sequence initiated.
+Message: Sourcing startup.src in master
+[user] :-) 
+Message: Sourcing open.src in user
+[user] :-) [user] :-) 
+[user] :-) use aquarium
+Resetting all updated flags: Done.
+Updating hash tables: leapattributes leaprel leapscripts leaptypes relship 
+Message: Opening the [aquarium] database...
+[aquarium] :-) [aquarium] :-) 
+[aquarium] :-) @ query1
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q1r1 = select (fish) (fcolor='red')
+[aquarium] :-) display ( project ( select (q1r1) (fcolor='red') ) (fname) )
+fname      
+---------- 
+albert     
+george     
+jill       
+kilroy     
+[aquarium] :-) Message: Relation zzaumc returned.
+
+[aquarium] :-) @ query2
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q2r2 = select (tank) (tname='lagoon')
+[aquarium] :-) display ( project ( select (q2r2) (tname='lagoon') ) (tcolor) )
+tcolor 
+------ 
+red    
+green  
+[aquarium] :-) [aquarium] :-) Message: Relation zzmjpy returned.
+
+[aquarium] :-) @ query3
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q3r3 = project (species) (sname)
+[aquarium] :-) q3r4 = project (tank) (tname)
+[aquarium] :-) q3r5 = (q3r3) product (q3r4)
+[aquarium] :-) [aquarium] :-) display ( q3r5 )
+sname      tname      
+---------- ---------- 
+dolphin    puddle     
+dolphin    cesspool   
+dolphin    lagoon     
+dolphin    beach      
+shark      puddle     
+shark      cesspool   
+shark      lagoon     
+shark      beach      
+guppy      puddle     
+guppy      cesspool   
+guppy      lagoon     
+guppy      beach      
+[aquarium] :-) Message: Relation q3r5 returned.
+
+[aquarium] :-) @ query4
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q4r7 = select (fish)
+[NON-FATAL] #33 - Condition not specified.
+[aquarium] :-) display ( project ( select (q4r7) ( (s#='22') or (s#='93') ) ) (fcolor) )
+fcolor 
+------ 
+white  
+orange 
+blue   
+purple 
+red    
+[aquarium] :-) Message: Relation zzteon returned.
+
+[aquarium] :-) @ query5
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q5r0 = select (species) (sname='shark')
+[aquarium] :-) q5r1 = project (q5r0) (sno)
+[aquarium] :-) q5r2 = join (fish) (q5r1) (s#=sno)
+[aquarium] :-) [aquarium] :-) display ( project ( select (q5r2) (s#=sno) ) (fcolor) )
+fcolor 
+------ 
+white  
+orange 
+blue   
+purple 
+red    
+[aquarium] :-) [aquarium] :-) Message: Relation zzgdrc returned.
+
+[aquarium] :-) @ query6
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q6r0 = select (species) (sname='shark')
+[aquarium] :-) q6r1 = project (q6r0) (sno)
+[aquarium] :-) q6r2 = join (fish) (q6r1) (s#=sno)
+[aquarium] :-) [aquarium] :-) q6r3 = select (tank) (tname='cesspool')
+[aquarium] :-) q6r5 = join (q6r2) (q6r3) (t#=tno)
+[aquarium] :-) [aquarium] :-) [aquarium] :-) display ( project ( select (q6r5) (t#=tno) ) (fname) )
+fname      
+---------- 
+killer     
+charlie    
+bonnie     
+darron     
+elsie      
+george     
+[aquarium] :-) Message: Relation zzlgdx returned.
+
+[aquarium] :-) @ query7
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q7r0 = project (species) (sname)
+[aquarium] :-) q7r1 = project (tank) (tname)
+[aquarium] :-) q7r2 = project (fish) (fname)
+[aquarium] :-) q7r3 = (q7r0) union (q7r1)
+[aquarium] :-) q7r4 = (q7r3) union (q7r2)
+[aquarium] :-) [aquarium] :-) display (q7r4)
+fname      
+---------- 
+dolphin    
+shark      
+guppy      
+puddle     
+cesspool   
+lagoon     
+beach      
+charlie    
+flipper    
+killer     
+albert     
+bonnie     
+cory       
+darron     
+elsie      
+fran       
+george     
+helen      
+indira     
+jill       
+kilroy     
+laura      
+maureen    
+[aquarium] :-) Message: Relation q7r4 returned.
+
+[aquarium] :-) @ query8
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q8r2 = join (fish) (species) (s#=sno)
+[aquarium] :-) [aquarium] :-) q8r3 = join (q8r2) (tank) (t#=tno)
+[aquarium] :-) [aquarium] :-) display ( project ( select (q8r3) (tname='puddle') ) (sname) )
+sname      
+---------- 
+dolphin    
+guppy      
+[aquarium] :-) Message: Relation zzhnmn returned.
+
+[aquarium] :-) @ query9
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q9r0 = project (species) (sno, sname)
+[aquarium] :-) q9r1 = project (fish) (fno, t#, s#)
+[aquarium] :-) q9r2 = project (tank) (tno)
+[aquarium] :-) [aquarium] :-) q9r3 = join (q9r1) (q9r0) (s#=sno)
+[aquarium] :-) q9r4 = join (q9r3) (q9r2) (t#=tno)
+[aquarium] :-) [aquarium] :-) q9r5 = project ( select (species) (sname='shark') ) (sno)
+[aquarium] :-) q9r6 = join (q9r5) (fish) (sno=s#)
+[aquarium] :-) q9r7 = join (q9r6) (tank) (t#=tno)
+[aquarium] :-) q9r8 = project (q9r7) (tno)
+[aquarium] :-) q9r9 = join (q9r8) (q9r4) (tno=t#)
+[aquarium] :-) [aquarium] :-) display ( project (q9r9) (sname) )
+sname      
+---------- 
+guppy      
+shark      
+dolphin    
+[aquarium] :-) Message: Relation zznnif returned.
+
+[aquarium] :-) @ query10
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q10r0 = join (event) (fish) (f#=fno)
+[aquarium] :-) [aquarium] :-) q10r2 = select (q10r0) (enote='Born')
+[aquarium] :-) [aquarium] :-) q10r3 = select (q10r0) (enote='Swimming')
+[aquarium] :-) [aquarium] :-) q10r4 = project (q10r3) (fname)
+[aquarium] :-) q10r5 = project (q10r2) (fname)
+[aquarium] :-) [aquarium] :-) q10r6 = (q10r4) intersect (q10r5)
+[aquarium] :-) [aquarium] :-) display ( project ( q10r6 ) (fname) )
+fname      
+---------- 
+flipper    
+[aquarium] :-) Message: Relation zztqvw returned.
+
+[aquarium] :-) @ query11
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q11r0 = join (event) (fish) (f#=fno)
+[aquarium] :-) [aquarium] :-) q11r2 = select (q11r0) (enote='Born')
+[aquarium] :-) [aquarium] :-) q11r3 = select (q11r0) (enote='Swimming')
+[aquarium] :-) [aquarium] :-) q11r4 = project (q11r3) (fname)
+[aquarium] :-) q11r5 = project (q11r2) (fname)
+[aquarium] :-) [aquarium] :-) q11r6 = (q11r5) difference (q11r4)
+[aquarium] :-) [aquarium] :-) display ( project ( q11r6 ) (fname) )
+fname      
+---------- 
+albert     
+indira     
+jill       
+laura      
+maureen    
+[aquarium] :-) Message: Relation zzxuch returned.
+
+[aquarium] :-) @ query12
+[aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) [aquarium] :-) q12r1 = project ( select (tank) (tcolor='green') ) (tno, tcolor)
+[aquarium] :-) [aquarium] :-) q12r2 = select (species) ((sfood='herring') or (sfood='anything'))
+[aquarium] :-) [aquarium] :-) q12r3 = join (q12r2) (fish) (sno=s#)
+[aquarium] :-) q12r4 = join (q12r1) (q12r3) (tno=t#)
+[aquarium] :-) [aquarium] :-) display ( project (q12r4) (sname) )
+sname      
+---------- 
+dolphin    
+[aquarium] :-) [aquarium] :-) Message: Relation zzrpbz returned.
+
+[aquarium] :-) quit

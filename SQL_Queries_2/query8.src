@@ -1,0 +1,9 @@
+##
+## What are the names of species found in puddles?
+##
+
+q8r2 = join (fish) (species) (s#=sno)
+
+q8r3 = join (q8r2) (tank) (t#=tno)
+
+display ( project ( select (q8r3) (tname='puddle') ) (sname) )

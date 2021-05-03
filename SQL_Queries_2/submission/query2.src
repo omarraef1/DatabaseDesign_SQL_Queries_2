@@ -1,0 +1,7 @@
+##
+## What are the colors of all tanks named "lagoon"?
+## selects tanks named lagoon and displays them
+
+q2r2 = select (tank) (tname='lagoon')
+display ( project ( select (q2r2) (tname='lagoon') ) (tcolor) )
+

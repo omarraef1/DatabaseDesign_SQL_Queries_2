@@ -1,0 +1,18 @@
+##
+## What are the names of species that are found in the same tank with a shark?
+##
+
+q9r0 = project (species) (sno, sname)
+q9r1 = project (fish) (fno, t#, s#)
+q9r2 = project (tank) (tno)
+
+q9r3 = join (q9r1) (q9r0) (s#=sno)
+q9r4 = join (q9r3) (q9r2) (t#=tno)
+
+q9r5 = project ( select (species) (sname='shark') ) (sno)
+q9r6 = join (q9r5) (fish) (sno=s#)
+q9r7 = join (q9r6) (tank) (t#=tno)
+q9r8 = project (q9r7) (tno)
+q9r9 = join (q9r8) (q9r4) (tno=t#)
+
+display ( project (q9r9) (sname) )

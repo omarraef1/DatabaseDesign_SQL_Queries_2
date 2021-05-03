@@ -1,0 +1,17 @@
+##
+## What are the names of the species that eat herring that have
+## a representative in all green tanks?
+## projects tanks colored green and tank numbers then
+## selects herring and anything eating species from species relations
+## joins both of the resulting relations with fish using specie number and tank number
+## then displays specie names for the resulting relation
+
+q12r1 = project ( select (tank) (tcolor='green') ) (tno, tcolor)
+
+q12r2 = select (species) ((sfood='herring') or (sfood='anything'))
+
+q12r3 = join (q12r2) (fish) (sno=s#)
+q12r4 = join (q12r1) (q12r3) (tno=t#)
+
+display ( project (q12r4) (sname) )
+

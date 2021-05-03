@@ -1,0 +1,13 @@
+##
+## What are the names of the fish that are sharks and live in cesspools?
+##
+
+q6r0 = select (species) (sname='shark')
+q6r1 = project (q6r0) (sno)
+q6r2 = join (fish) (q6r1) (s#=sno)
+
+q6r3 = select (tank) (tname='cesspool')
+q6r5 = join (q6r2) (q6r3) (t#=tno)
+
+
+display ( project ( select (q6r5) (t#=tno) ) (fname) )

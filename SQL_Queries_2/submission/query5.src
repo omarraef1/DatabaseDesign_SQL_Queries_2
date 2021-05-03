@@ -1,0 +1,11 @@
+##
+## What are the colors of the sharks?
+## selects shark species and projects their specie number then joins it with fish through specie code and displays color
+
+
+q5r0 = select (species) (sname='shark')
+q5r1 = project (q5r0) (sno)
+q5r2 = join (fish) (q5r1) (s#=sno)
+
+display ( project ( select (q5r2) (s#=sno) ) (fcolor) )
+

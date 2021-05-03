@@ -1,0 +1,12 @@
+##
+## Create a relation containing names of species, tanks, & fish in one column
+## projects species, tanks, and fish names and combines them all using two union operations
+
+
+q7r0 = project (species) (sname)
+q7r1 = project (tank) (tname)
+q7r2 = project (fish) (fname)
+q7r3 = (q7r0) union (q7r1)
+q7r4 = (q7r3) union (q7r2)
+
+display (q7r4)

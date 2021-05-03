@@ -1,0 +1,10 @@
+##
+## What is the Cartesian Product of the sname field from Species
+## with the tname field from Tank?
+##
+
+q3r3 = project (species) (sname)
+q3r4 = project (tank) (tname)
+q3r5 = (q3r3) product (q3r4)
+
+display ( q3r5 )
